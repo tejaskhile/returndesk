@@ -1,14 +1,39 @@
-
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 const STATUSES = [
-  { value: "OPEN", label: "Open", dot: "bg-blue-500", badge: "bg-blue-100 text-blue-800" },
-  { value: "IN_REVIEW", label: "In Review", dot: "bg-amber-500", badge: "bg-amber-100 text-amber-900" },
-  { value: "APPROVED", label: "Approved", dot: "bg-emerald-500", badge: "bg-emerald-100 text-emerald-800" },
-  { value: "REJECTED", label: "Rejected", dot: "bg-red-500", badge: "bg-red-100 text-red-800" },
-  { value: "COMPLETED", label: "Completed", dot: "bg-slate-400", badge: "bg-slate-200 text-slate-700" },
+  {
+    value: "OPEN",
+    label: "Open",
+    dot: "bg-blue-500",
+    badge: "bg-blue-100 text-blue-800",
+  },
+  {
+    value: "IN_REVIEW",
+    label: "In Review",
+    dot: "bg-amber-500",
+    badge: "bg-amber-100 text-amber-900",
+  },
+  {
+    value: "APPROVED",
+    label: "Approved",
+    dot: "bg-emerald-500",
+    badge: "bg-emerald-100 text-emerald-800",
+  },
+  {
+    value: "REJECTED",
+    label: "Rejected",
+    dot: "bg-red-500",
+    badge: "bg-red-100 text-red-800",
+  },
+  {
+    value: "COMPLETED",
+    label: "Completed",
+    dot: "bg-slate-400",
+    badge: "bg-slate-200 text-slate-700",
+  },
 ];
 
 const REASONS = [
@@ -132,30 +157,31 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const loadRequests = useCallback(async (signal) => {
-    const params = new URLSearchParams({
-      q: query,
-      page: String(page),
-      limit: "8",
-      sortBy: "updatedAt",
-      sortOrder,
-    });
+  const loadRequests = useCallback(
+    async (signal) => {
+      const params = new URLSearchParams({
+        q: query,
+        page: String(page),
+        limit: "8",
+        sortBy: "updatedAt",
+        sortOrder,
+      });
 
-    if (status) params.set("status", status);
-    if (reason) params.set("reason", reason);
+      if (status) params.set("status", status);
+      if (reason) params.set("reason", reason);
 
-    const response = await fetch(`/api/requests?${params}`, { signal });
-    const result = await response.json();
+      const response = await fetch(`/api/requests?${params}`, { signal });
+      const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        result?.error?.message || "Unable to load requests."
-      );
-    }
+      if (!response.ok) {
+        throw new Error(result?.error?.message || "Unable to load requests.");
+      }
 
-    setRequests(result.data);
-    setPagination(result.pagination);
-  }, [query, page, status, reason, sortOrder]);
+      setRequests(result.data);
+      setPagination(result.pagination);
+    },
+    [query, page, status, reason, sortOrder],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -194,10 +220,9 @@ export default function HomePage() {
               sortOrder: "desc",
             });
 
-            const response = await fetch(
-              `/api/requests?${params}`,
-              { signal: controller.signal }
-            );
+            const response = await fetch(`/api/requests?${params}`, {
+              signal: controller.signal,
+            });
 
             const result = await response.json();
 
@@ -206,7 +231,7 @@ export default function HomePage() {
             }
 
             return [item.value, result.pagination.total];
-          })
+          }),
         );
 
         if (!controller.signal.aborted) {
@@ -240,19 +265,16 @@ export default function HomePage() {
   const firstItem =
     pagination.total === 0 ? 0 : (page - 1) * pagination.limit + 1;
 
-  const lastItem = Math.min(
-    page * pagination.limit,
-    pagination.total
-  );
+  const lastItem = Math.min(page * pagination.limit, pagination.total);
 
   return (
     <div className="min-h-screen bg-[#f4f6fa] text-[#20263a]">
       <nav className="bg-white min-h-10 flex items-center px-10 py-2 max-sm:px-4">
-        <a href="/" className="flex items-center">
+        <Link href="/" className="flex items-center">
           <span className="text-2xl font-bold tracking-tight items-center">
             Return<span className="text-indigo-700">Desk</span>
           </span>
-        </a>
+        </Link>
       </nav>
 
       {/* Main dashboard */}
@@ -261,20 +283,18 @@ export default function HomePage() {
           {/* Heading */}
           <header className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-xl font-bold tracking-tight">
-                Requests
-              </h1>
+              <h1 className="text-xl font-bold tracking-tight">Requests</h1>
               <p className="mt-0.5 text-sm text-slate-500">
                 Review, decide and close out customer returns.
               </p>
             </div>
 
-            <a
+            <Link
               href="/requests/new"
               className="inline-flex min-h-10 items-center justify-center rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition focus:outline-none focus:ring-2 focus:ring-indigo-300"
             >
               + New request
-            </a>
+            </Link>
           </header>
 
           {/* Status summary cards */}
@@ -304,9 +324,7 @@ export default function HomePage() {
                 <p className="mt-3 text-3xl font-bold leading-none tracking-tight">
                   {counts[item.value] ?? "—"}
                 </p>
-                <p className="mt-1.5 text-sm text-slate-500">
-                  {item.label}
-                </p>
+                <p className="mt-1.5 text-sm text-slate-500">{item.label}</p>
               </button>
             ))}
           </section>
@@ -316,7 +334,9 @@ export default function HomePage() {
             <div className="flex flex-col gap-4 p-4">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(200px,1fr)_auto_auto_auto]">
                 <label className="relative block min-w-0">
-                  <span className="sr-only">Search customer, order or reference</span>
+                  <span className="sr-only">
+                    Search customer, order or reference
+                  </span>
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">
                     <SearchIcon />
                   </span>
@@ -420,18 +440,13 @@ export default function HomePage() {
                     <th className="px-3.5 py-3">Order · Item</th>
                     <th className="px-3.5 py-3">Reason</th>
                     <th className="px-3.5 py-3">Status</th>
-                    <th className="whitespace-nowrap px-3.5 py-3">
-                      Updated 
-                    </th>
+                    <th className="whitespace-nowrap px-3.5 py-3">Updated</th>
                   </tr>
                 </thead>
 
                 <tbody className="divide-y divide-slate-100">
                   {requests.map((item) => (
-                    <tr
-                      key={item.id}
-                      className="transition hover:bg-slate-50"
-                    >
+                    <tr key={item.id} className="transition hover:bg-slate-50">
                       <td className="whitespace-nowrap px-3.5 py-3.5">
                         <a
                           href={`/requests/${item.id}`}
@@ -442,9 +457,7 @@ export default function HomePage() {
                       </td>
 
                       <td className="px-3.5 py-3.5">
-                        <span className="font-medium">
-                          {item.customerName}
-                        </span>
+                        <span className="font-medium">{item.customerName}</span>
                       </td>
 
                       <td className="px-3.5 py-3.5">
@@ -469,10 +482,7 @@ export default function HomePage() {
 
                   {!loading && !error && requests.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={6}
-                        className="px-5 py-16 text-center"
-                      >
+                      <td colSpan={6} className="px-5 py-16 text-center">
                         <p className="font-semibold text-slate-800">
                           No requests found
                         </p>
@@ -545,9 +555,7 @@ export default function HomePage() {
                 </button>
                 <button
                   type="button"
-                  disabled={
-                    page >= pagination.totalPages || loading
-                  }
+                  disabled={page >= pagination.totalPages || loading}
                   onClick={() => setPage((current) => current + 1)}
                   className="rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
                 >

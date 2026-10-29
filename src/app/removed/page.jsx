@@ -1,6 +1,6 @@
-
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 function relativeDate(value) {
@@ -53,16 +53,15 @@ export default function RemovedRequestsPage() {
       });
 
       try {
-        const response = await fetch(
-          `/api/requests/removed?${params}`,
-          { signal: controller.signal }
-        );
+        const response = await fetch(`/api/requests/removed?${params}`, {
+          signal: controller.signal,
+        });
 
         const result = await response.json();
 
         if (!response.ok) {
           throw new Error(
-            result?.error?.message || "Unable to load removed requests."
+            result?.error?.message || "Unable to load removed requests.",
           );
         }
 
@@ -83,9 +82,9 @@ export default function RemovedRequestsPage() {
   return (
     <main className="min-h-screen bg-[#f4f6fa] px-4 py-6 text-slate-900 sm:px-6">
       <div className="mx-auto max-w-6xl">
-        <a href="/" className="text-sm font-medium text-indigo-700">
+        <Link href="/" className="text-sm font-medium text-indigo-700">
           ← Back to requests
-        </a>
+        </Link>
 
         <header className="mb-6 mt-5">
           <h1 className="text-2xl font-bold">Removed requests</h1>
@@ -97,9 +96,7 @@ export default function RemovedRequestsPage() {
         <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
           <div className="p-4">
             <label className="block">
-              <span className="sr-only">
-                Search removed requests
-              </span>
+              <span className="sr-only">Search removed requests</span>
               <input
                 type="search"
                 value={query}
@@ -111,7 +108,10 @@ export default function RemovedRequestsPage() {
           </div>
 
           {error && (
-            <p role="alert" className="mx-4 mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            <p
+              role="alert"
+              className="mx-4 mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700"
+            >
               {error}
             </p>
           )}
@@ -156,7 +156,9 @@ export default function RemovedRequestsPage() {
                       </td>
                       <td className="px-4 py-3">{item.customerName}</td>
                       <td className="px-4 py-3">{item.orderNumber}</td>
-                      <td className="px-4 py-3">{item.status.replaceAll("_", " ")}</td>
+                      <td className="px-4 py-3">
+                        {item.status.replaceAll("_", " ")}
+                      </td>
                       <td className="px-4 py-3 text-slate-500">
                         {relativeDate(item.archivedAt)}
                       </td>

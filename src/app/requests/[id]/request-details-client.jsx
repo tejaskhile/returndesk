@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
@@ -26,7 +25,6 @@ const RESOLUTIONS = [
   ["STORE_CREDIT", "Store Credit"],
 ];
 
-
 function humanize(value) {
   if (value == null || value === "") return "—";
 
@@ -36,7 +34,6 @@ function humanize(value) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
-
 
 function dateTime(value) {
   if (!value) return "—";
@@ -82,35 +79,38 @@ export default function RequestDetailsPage({ id }) {
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
 
-  const loadRequest = useCallback(async (signal) => {
-    const response = await fetch(`/api/requests/${id}`, { signal });
-    const result = await response.json();
+  const loadRequest = useCallback(
+    async (signal) => {
+      const response = await fetch(`/api/requests/${id}`, { signal });
+      const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(
-        result?.error?.message || "Unable to load this request."
+      if (!response.ok) {
+        throw new Error(
+          result?.error?.message || "Unable to load this request.",
+        );
+      }
+
+      setRequest(result.data);
+      setEditForm({
+        customerName: result.data.customerName || "",
+        customerEmail: result.data.customerEmail || "",
+        customerPhone: result.data.customerPhone || "",
+        orderNumber: result.data.orderNumber || "",
+        itemSku: result.data.itemSku || "",
+        itemName: result.data.itemName || "",
+        quantity: result.data.quantity,
+        reason: result.data.reason,
+      });
+
+      setResolution(result.data.resolution || "REFUND");
+      setRefundAmount(
+        result.data.refundAmount == null
+          ? ""
+          : String(result.data.refundAmount),
       );
-    }
-
-    setRequest(result.data);
-    setEditForm({
-      customerName: result.data.customerName || "",
-      customerEmail: result.data.customerEmail || "",
-      customerPhone: result.data.customerPhone || "",
-      orderNumber: result.data.orderNumber || "",
-      itemSku: result.data.itemSku || "",
-      itemName: result.data.itemName || "",
-      quantity: result.data.quantity,
-      reason: result.data.reason,
-    });
-
-    setResolution(result.data.resolution || "REFUND");
-    setRefundAmount(
-      result.data.refundAmount == null
-        ? ""
-        : String(result.data.refundAmount)
-    );
-  }, [id]);
+    },
+    [id],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -134,23 +134,18 @@ export default function RequestDetailsPage({ id }) {
     return () => controller.abort();
   }, [loadRequest]);
 
-  const isEditable =
-    request && ["OPEN", "IN_REVIEW"].includes(request.status);
+  const isEditable = request && ["OPEN", "IN_REVIEW"].includes(request.status);
 
-  const canArchive =
-    request && ["OPEN", "REJECTED"].includes(request.status);
+  const canArchive = request && ["OPEN", "REJECTED"].includes(request.status);
 
-  const availableTransitions =
-    request ? TRANSITIONS[request.status] || [] : [];
+  const availableTransitions = request ? TRANSITIONS[request.status] || [] : [];
 
   async function apiAction(url, options) {
     const response = await fetch(url, options);
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(
-        result?.error?.message || "The operation failed."
-      );
+      throw new Error(result?.error?.message || "The operation failed.");
     }
 
     return result.data;
@@ -242,7 +237,7 @@ export default function RequestDetailsPage({ id }) {
 
   async function archiveRequest() {
     const confirmed = window.confirm(
-      "Archive this request? It will be removed from the normal request list."
+      "Archive this request? It will be removed from the normal request list.",
     );
 
     if (!confirmed) return;
@@ -463,7 +458,9 @@ export default function RequestDetailsPage({ id }) {
                   required
                   maxLength={120}
                   value={editForm.customerName}
-                  onChange={(e) => updateEditField("customerName", e.target.value)}
+                  onChange={(e) =>
+                    updateEditField("customerName", e.target.value)
+                  }
                   className={inputClass}
                 />
               </Field>
@@ -474,7 +471,9 @@ export default function RequestDetailsPage({ id }) {
                   type="email"
                   maxLength={254}
                   value={editForm.customerEmail}
-                  onChange={(e) => updateEditField("customerEmail", e.target.value)}
+                  onChange={(e) =>
+                    updateEditField("customerEmail", e.target.value)
+                  }
                   className={inputClass}
                 />
               </Field>
@@ -483,7 +482,9 @@ export default function RequestDetailsPage({ id }) {
                 <input
                   maxLength={30}
                   value={editForm.customerPhone}
-                  onChange={(e) => updateEditField("customerPhone", e.target.value)}
+                  onChange={(e) =>
+                    updateEditField("customerPhone", e.target.value)
+                  }
                   className={inputClass}
                 />
               </Field>
@@ -492,7 +493,9 @@ export default function RequestDetailsPage({ id }) {
                 <input
                   required
                   value={editForm.orderNumber}
-                  onChange={(e) => updateEditField("orderNumber", e.target.value)}
+                  onChange={(e) =>
+                    updateEditField("orderNumber", e.target.value)
+                  }
                   className={inputClass}
                 />
               </Field>
@@ -542,7 +545,11 @@ export default function RequestDetailsPage({ id }) {
               </Field>
 
               <div className="flex flex-wrap gap-2 sm:col-span-2">
-                <button type="submit" disabled={saving} className={primaryButton}>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className={primaryButton}
+                >
                   {saving ? "Saving…" : "Save changes"}
                 </button>
                 <button
@@ -605,7 +612,8 @@ export default function RequestDetailsPage({ id }) {
           <div>
             <h2 className="font-semibold">Internal notes</h2>
             <p className="mt-1 text-sm text-slate-500">
-              Notes are stored as a chronological history and cannot be edited here.
+              Notes are stored as a chronological history and cannot be edited
+              here.
             </p>
           </div>
 
