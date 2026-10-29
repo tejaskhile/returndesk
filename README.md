@@ -252,6 +252,10 @@ npx prisma db seed
 
 The seed uses deterministic references and upserts so repeated runs do not create duplicate seed requests. Existing notes are checked before sample notes are inserted.
 
+## Incomplete Work and Limitations
+
+None, but would improve UI
+
 ## Deployment
 
 **Live Application**: https://returndesk-six.vercel.app/
