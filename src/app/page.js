@@ -127,7 +127,7 @@ export default function HomePage() {
     const timer = setTimeout(() => {
       setQuery(searchInput.trim());
       setPage(1);
-    }, 350);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [searchInput]);
@@ -247,7 +247,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#f4f6fa] text-[#20263a]">
-      <nav className="flex w-full shrink-0 bg-white px-4 py-4 md:sticky md:h-[60px] md:w-full md:px-10 md:py-5">
+      <nav className="bg-white min-h-10 flex items-center px-10 py-2 max-sm:px-4">
         <a href="/" className="flex items-center">
           <span className="text-2xl font-bold tracking-tight items-center">
             Return<span className="text-indigo-700">Desk</span>
@@ -379,7 +379,7 @@ export default function HomePage() {
 
               {(query || status || reason) && (
                 <div className="flex items-center justify-between gap-3">
-                  <p className="break-words text-xs text-slate-500">
+                  <p className="wrap-break-word text-xs text-slate-500">
                     Showing filtered results
                   </p>
                   <button
@@ -498,14 +498,14 @@ export default function HomePage() {
                       >
                         {item.reference}
                       </a>
-                      <p className="mt-1 break-words text-sm font-medium">
+                      <p className="mt-1 wrap-break-word text-sm font-medium">
                         {item.customerName}
                       </p>
                     </div>
                     <StatusBadge status={item.status} />
                   </div>
 
-                  <p className="break-words text-sm text-slate-500">
+                  <p className="wrap-break-word text-sm text-slate-500">
                     #{item.orderNumber} · {item.itemName} ×{item.quantity}
                   </p>
 
