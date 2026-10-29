@@ -432,7 +432,6 @@ export default function HomePage() {
                       key={item.id}
                       className="transition hover:bg-slate-50"
                     >
-              
                       <td className="whitespace-nowrap px-3.5 py-3.5">
                         <a
                           href={`/requests/${item.id}`}
